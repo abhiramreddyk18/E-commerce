@@ -1,0 +1,37 @@
+
+
+<div *ngIf="showLoginModal" class="modal-overlay">
+    <div class="modal-content">
+      <button (click)="nav()" class="close-btn">×</button>
+      
+     
+<div class="modal-boby">
+    <div class="row">
+        <div class="col-4">
+            <label for="">Name:</label>
+            <input type="text" [(ngModel)]="userRegister.Name" class="form-control">
+        </div>
+        <div class="col-4">
+            <label for="">MoblieNo:</label>
+            <input type="number" [(ngModel)]="userRegister.MoblieNo" class="form-control">
+        </div>
+        <div class="col-4">
+            <label for="">Password:</label>
+            <input type="text" [(ngModel)]="userRegister.password" class="form-control">
+        </div>
+    </div>
+
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" >Close</button>
+        <button type="button" class="btn btn-danger" (click)="onRegister()">Sign Up</button>
+    </div>
+  
+    </div>
+  </div>
+
+
+
+
+
+</div>

@@ -1,0 +1,54 @@
+
+<div class="container">
+   <div class="row">
+    <div class="col-md-12">
+        <h2 style="text-align: center;">All Products</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col ">
+        <ng-container *ngIf="categoryList$ | async as apiResponse">
+            <ng-container *ngFor="let item of apiResponse.data">
+              
+                <button class="btn btn-primary"  (click)="getProductsByCategory(item.categoryId)"  style="margin:10px;"   *ngIf="item.parentCategoryId == 0">{{item.categoryName}} </button>
+             
+                
+            </ng-container>
+        </ng-container>
+        
+    </div>
+   </div>
+   
+    <div class="row">
+        <div class="col-3 col-sm-3  col-md-3" *ngFor="let item of productList">
+          <div class="card">
+            <img [src]="item.productImageUrl" alt="" class="img-fluid" style="width: 200px; height: 200px;">
+            <div class="card-body">
+              <h3 class="card-title">{{item.productShortName}}</h3>
+              <p class="card-text">
+                <span class="text-danger">$ {{item.productPrice}}</span>
+                <span class="text-success">35% off</span>
+              </p>
+              <div class="row r1">
+                <div class="col-6" style="display: flex; flex-direction: row;">
+                  <span><i class="fa-solid fa-star m-0" style="color: #f1f50f"></i></span>
+                  <span><i class="fa-solid fa-star m-0" style="color: #f1f50f"></i></span>
+                  <span><i class="fa-solid fa-star m-0" style="color: #f1f50f"></i></span>
+                  <span><i class="fa-solid fa-star m-0" style="color: #f1f50f"></i></span>
+                  <span><i class="fa-solid fa-star m-0" style="color: #f1f50f"></i></span>
+                  <span class="text-muted">(25)</span>
+                </div>
+                <div class="col-6">
+                  <p class="text-end pb-0 mb-0">
+                    <button class="btn btn-sm btn-success p-2">
+                      <i class="fa-solid fa-cart-plus fs-5" style="color: #0c0d0d;"></i>
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+</div>
