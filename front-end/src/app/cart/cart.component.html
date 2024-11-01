@@ -1,0 +1,74 @@
+<ng-container *ngIf="product.length>=1">
+   <div class="container">
+    <div class="card-table">
+        <div class="cart-product">
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Sr.no</th>
+                        <th>Product Name</th>
+                        <th>Product Image</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of product;  let i=index; ">
+                        <td>{{i+1}}</td>
+                        <td style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;max-width:30ch;">{{item.title}}</td>
+                        <td><img src="{{item.image}}" alt="" class="image"></td>
+                        <td style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;max-width:20ch;">{{item.description}}</td>
+                        <td>{{item.price}}</td>
+                        <td> 
+                            <button class="btn btn-primary" (click)="DecreaseItem(i)">-</button>
+                            {{item.quantity}} 
+                            <button class="btn btn-primary" (click)="IncreaseItem(i)">+</button></td>
+                        <td>{{item.total}}</td>
+
+                        <td><button class="btn btn-danger"  (click)="onDelete(i)">Delete</button></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="desc">
+        <div class="btn1">
+            <button class="btn btn-danger" (click)="RemoveAll()">Remove All</button>
+        </div>
+        <div class="btn2">
+            <button class="btn btn-success" (click)="ShopMore()">Shop More</button>
+        </div>
+    
+        <div class="grandTota1">
+            <h4 style="font-weight: bolder;">Grand Total:</h4>
+            <h6 style="font-weight: bolder; margin-left:50px;">{{TotalPrice}}</h6>
+        </div>
+       
+        
+    </div>
+    
+   </div>
+  
+</ng-container>
+
+
+<ng-container *ngIf="product.length==0">
+    <div class="container">
+        <div class="card">
+            <div class="card-title">My cart</div>
+        </div>
+        <div class="center">
+            <img src="assets/images/addcart.png" alt="" class="cart">
+            <h3>Your cart is Empty!</h3>
+            <h5>Add item to it now</h5>
+            <button class="btn btn-primary" (click)="ShopMore()">Shop Now</button>
+        </div>
+    </div>
+</ng-container>
+
+ 

@@ -1,65 +1,49 @@
-<div class="c">
-    <div class="left">
-        <img src="https://cdn5.vectorstock.com/i/1000x1000/16/59/shopping-cart-sign-orange-icon-on-black-vector-13391659.jpg" alt="bigbasket" >
-        <h1>Big BASKET</h1>
-    </div>
+<div class="container">
+    <div class="header">
 
-    <div class="right">
-     
-       
-                <div    class="btn-group" appDropdown>
-                <button
-                  type="button"
-                  class="btn  dropdown-toggle">
-                  HOME <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a  style="cursor: pointer;">To Shopping List</a></li>
-                  <li><a style="cursor: pointer;" >Edit Recipe</a></li>
-                  <li><a style="cursor: pointer;" >Delete Recipe</a></li>
-                </ul>
+        <div class="left">
+            <div class="logo">
+                <img src="assets/images/logo-removebg-preview.png" alt="">
+                <h3>ShoppingCart</h3>  
+            </div>
+    
+            <div class="search">
+                <input type="text" class="input">
+                <img src="assets/images/search.jpg" alt="">
+            </div>
+    
+        </div>
+        
+
+
+        <div class="right">
+            <div class="cart">
+                <img src="assets/images/newcart.png"  routerLink="/cart">
+                <div class="button">
+                    <button class="btn btn-default">{{len}}</button>
                 </div>
-           
-           
+            </div>
+    
+            
                 <div
-                class="btn-group"
-                appDropdown>
+                class="btn-group" 
+                appDropdown style="background-color:red;">
                 <button
                   type="button"
-                  class="btn  dropdown-toggle">
-                  PAGES <span class="caret"></span>
+                  class="dropdown-toggle" style="background-color:blue; border:0;">
+                  <i class="fas fa-user fa-2x"></i><span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a  style="cursor: pointer;">To Shopping List</a></li>
-                  <li><a style="cursor: pointer;" >Edit Recipe</a></li>
-                  <li><a style="cursor: pointer;" >Delete Recipe</a></li>
+                  <li><a routerLink="/login" style="cursor: pointer;">Login</a></li>
+                  <li><a routerLink="/register" style="cursor: pointer;" >Register</a></li>
+                  <li><a routerLink="/login" style="cursor: pointer;" (click)="logout()">logout</a></li>
+                  
                 </ul>
               </div>
-            
-           
-                <i class="fas fa-search fa-2x"></i>
+            </div>
         
-            
-                <div    class="btn-group" appDropdown>
-                    <button
-                      type="button"
-                      class="btn  dropdown-toggle" style="display:flex; align-items:center; justify-content:space-between; width:50px;">
-                      <i class="fas fa-user fa-2x"></i>  <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a  
-                        routerLink="/login"
-                        style="cursor: pointer;">Login</a></li>
-                      <li><a style="cursor: pointer;" >Register</a></li>
-                    
-                    </ul>
-                </div>
-           
-                <i class="fas fa-shopping-cart  fa-2x"></i>
-            
-                
-            
-    
-    </div>
 
-       
+        
+        
+    </div>
+</div>

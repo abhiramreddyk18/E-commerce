@@ -1,25 +1,34 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DropdownDirective } from '../dropdown.directive';
-import { BehaviorSubject } from 'rxjs';
-import { ProductService } from '../core/services/product.service';
+import { Component, OnInit } from '@angular/core';
+import { CartService } from '../service/cart.service';
+import { ApiService } from '../service/api.service';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
-  imports: [RouterLink,DropdownDirective],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
 
-  constructor(private productservice:ProductService){}
+len:number=0;
+
+constructor(private cartservice:CartService,private apiservice:ApiService){}
+
+ngOnInit(): void {
 
 
-  login(){
+  this.cartservice.length.subscribe(length=>{
+  this.len=length;
+  })
 
-    this.productservice.selectlogin(true);
 
-  }
+}
 
+
+logout(){
+  this.apiservice.logout().subscribe(res=>{
+    console.log(res);
+  });
+}
+
+ 
 }

@@ -1,0 +1,47 @@
+<div class="container-top">
+    <div class="products">
+        <div class="item"  (click)="category('All')" >
+            <a>
+                <img src="assets/images/allpro.png" alt="" >
+                <h5> All Products </h5>
+            </a>
+        </div>
+        <div class="item" (click)="category('electronics')">
+            <a>
+                <img src="assets/images/electronic.jpg" alt="">
+                <h5>Electronics</h5>
+            </a>
+        </div>
+        <div class="item" (click)="category('mensclothing')">
+            <a>
+                <img src="assets/images/fashion.jpg" alt="">
+                <h5>Fashion</h5>
+            </a>
+        </div>
+        <div class="item" (click)="category('jewelery')" >
+            <a>
+                <img src="assets/images/jewellary.jpg" alt="">
+                <h5>jewellary</h5>
+            </a>
+
+        
+        </div>
+    </div>
+    
+</div>
+
+
+<div class="container-mid">
+    <div class="row">
+        <ng-container *ngFor="let item of productList; let i=index;">
+            <div class="card col-md-3" style="border:0.3px solid black; padding:10px;">
+                <img src="{{item.image}}" alt="" class="image">
+                <h5 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;max-width:100ch;">{{item.title}}</h5> 
+                <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;max-width:100ch;">{{item.description}}</p> 
+                 <p><strong>Price:</strong>${{item.price}}</p>{{item.category}}
+                <button class="btn btn-primary" style="width:100%" (click)="addToCart(item) ">Add To Cart</button>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
