@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../service/api.service';
-import { Subject } from 'rxjs';
+
 import { CartComponent } from '../cart/cart.component';
 import { CartService } from '../service/cart.service';
 import { Product } from '../models/product';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -14,10 +15,10 @@ export class ProductComponent implements OnInit {
   public productList:any;
   public Allproducts:any;
 
- product:Product=new Product('','',0,0);
+ product:Product=new Product('','','','',0,0,0);
   
 
-  constructor(private apiservice:ApiService,private cartservice:CartService){}
+  constructor(private apiservice:ApiService,private cartservice:CartService,private router:Router){}
 
   ngOnInit(): void {
       this.apiservice.getproduct().subscribe(res=>{
@@ -38,10 +39,7 @@ export class ProductComponent implements OnInit {
 
 
   addToCart(item:any){
-
-    // this.cartservice.sendingproduct(item);
-
-    this.product=new Product (item.id,item.title,1,item.price); 
+    this.product=new Product (item.id,item.title,item.image,item.description,1,item.price,item.total); 
      
     this.cartservice.addtocart(this.product);
       
@@ -64,6 +62,10 @@ category(category:string){
       console.log(this.productList);
     }
     
+}
+
+gotoproduct(id:string){
+  this.router.navigate(['/product-details',id]);
 }
 
 }

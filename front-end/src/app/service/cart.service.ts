@@ -115,20 +115,21 @@ export class CartService {
       addtocart(item:Product){
         console.log("entered service");
         console.log(item.name);
-        this.http.post("http://localhost:1234/add_to_cart",item,{ withCredentials: true }).subscribe((res)=>{
+        this.http.post("http://localhost:1234/add_to_cart",item).subscribe((res)=>{
           console.log(res);
         },error=>{
-          console.log(error);
+          console.log(error);     
         });
       }
 
 
       getproducts(){
-        this.http.get("http://localhost:1234/get_products").subscribe((res)=>{
-          console.log(res)
-        },(error)=>{
-          console.log(error);
-        })
+        return this.http.get("http://localhost:1234/get_products");
+  
+      }
+
+      getProductDetails(id:number){
+        return this.http.get(`https://fakestoreapi.com/products/${id}`);
       }
 
      

@@ -23,10 +23,10 @@
                 <img src="assets/images/jewellary.jpg" alt="">
                 <h5>jewellary</h5>
             </a>
-
-        
         </div>
     </div>
+
+    <a routerLink="/product-details">click</a>
     
 </div>
 
@@ -34,14 +34,17 @@
 <div class="container-mid">
     <div class="row">
         <ng-container *ngFor="let item of productList; let i=index;">
-            <div class="card col-md-3" style="border:0.3px solid black; padding:10px;">
+            <div class="card col-md-3" style="border:0.3px solid black; padding:10px;" (click)="gotoproduct(item.id)">
                 <img src="{{item.image}}" alt="" class="image">
                 <h5 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;max-width:100ch;">{{item.title}}</h5> 
                 <p style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;max-width:100ch;">{{item.description}}</p> 
                  <p><strong>Price:</strong>${{item.price}}</p>{{item.category}}
-                <button class="btn btn-primary" style="width:100%" (click)="addToCart(item) ">Add To Cart</button>
+                 <div> <button class="btn btn-primary" style="width:100%" (click)="addToCart(item); $event.stopPropagation();">Add To Cart</button></div>
+                 
             </div>
+           
         </ng-container>
     </div>
 </div>
+
 

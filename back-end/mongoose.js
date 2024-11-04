@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const url='mongodb://localhost:27017/shopping';
+const url='mongodb://localhost:27017/shop';
 
 const connectDB=async()=>{
     mongoose.connect(url).then(()=>console.log("mongoose connected"))

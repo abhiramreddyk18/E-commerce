@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService } from '../service/cart.service';
-import { ApiService } from '../service/api.service';
+
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,19 +12,18 @@ export class CartComponent implements OnInit{
   public product:any=[];
   TotalPrice:number;
 
-constructor(private cartservice:CartService,private router:Router){}
+constructor(private cartservice:CartService){}
 
 
 ngOnInit(){
-//   this.cartservice.sendproduct.subscribe(res=>{
-//     this.product=res;
-//   console.log(this.product);
-  
-// });
-    // this.product=this.cartservice.products;
-    // this.TotalPrice=this.cartservice.grandTotal
 
-    this.cartservice.getproducts();
+
+    this.cartservice.getproducts().subscribe(res=>{
+      this.product=res;
+    },error=>{
+      console.log(error);
+    }
+    );
 
 }
 
@@ -63,9 +62,9 @@ IncreaseItem(index:number){
 }
 
 
-ShopMore(){
-  this.router.navigate(['products']);
-}
+// ShopMore(){
+//   this.router.navigate(['products']);
+// }
 
 
 

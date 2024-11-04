@@ -23,12 +23,5 @@ ngOnInit(): void {
 
 }
 
-
-logout(){
-  this.apiservice.logout().subscribe(res=>{
-    console.log(res);
-  });
-}
-
  
 }
