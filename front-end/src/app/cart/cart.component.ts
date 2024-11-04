@@ -24,7 +24,13 @@ ngOnInit(){
     // this.product=this.cartservice.products;
     // this.TotalPrice=this.cartservice.grandTotal
 
-    this.cartservice.getproducts();
+    this.cartservice.getproducts().subscribe(res=>{
+      console.log("cart is created ");
+      this.product=res;
+      console.log(this.product);
+    },error=>{
+      console.log(error);
+  });
 
 }
 

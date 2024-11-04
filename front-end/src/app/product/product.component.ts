@@ -14,7 +14,7 @@ export class ProductComponent implements OnInit {
   public productList:any;
   public Allproducts:any;
 
- product:Product=new Product('','',0,0);
+  product:Product=new Product('','','','',0,0,0);
   
 
   constructor(private apiservice:ApiService,private cartservice:CartService){}
@@ -41,7 +41,7 @@ export class ProductComponent implements OnInit {
 
     // this.cartservice.sendingproduct(item);
 
-    this.product=new Product (item.id,item.title,1,item.price); 
+    this.product=new Product (item.id,item.title,item.image,item.description,1,item.price,item.price);
      
     this.cartservice.addtocart(this.product);
       

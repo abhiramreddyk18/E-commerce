@@ -29,7 +29,13 @@ app.use(session({
         sameSite: 'lax',
     },
 }));
-
+function authenticate(req, res, next) {
+    if (req.session.user) {
+      next();
+    } else {
+      res.status(401).send('Unauthorized'); 
+    }
+}
 const user_schema = new mongoose.Schema({
     name: { type: String },
     email: { type: String, required: true, unique: true },
@@ -42,8 +48,11 @@ const cart_schema = new mongoose.Schema({
         {
             product_id: { type: String, required: true },
             name: { type: String, required: true },
+            image: { type: String, required: true },
+            description:{type:String,required:true},
             quantity: { type: Number, required: true },
             price: { type: Number, required: true },
+            total:{type:Number,required:true}
         },
     ],
 });
@@ -96,29 +105,26 @@ app.post('/user_login', async (req, res) => {
 
 // add to cart
 
-app.post('/add_to_cart', async (req, res) => {
+app.post('/add_to_cart',authenticate, async (req, res) => {
     try {
-        const { product_id, name, quantity, price } = req.body;
+        const { product_id, name,image,description,quantity, price,total} = req.body;
 
-        console.log(req.session.user._id);
-        if (!req.session.user || !req.session.user._id) {
-            return res.status(401).json({ message: 'Unauthorized, please log in' });
-        }
-
+        
         let cart = await Cart.findOne({ user_id: req.session.user._id });
         console.log(req.session.user?.id)
         console.log(req.session.user._id);
         if (!cart) {
             cart = new Cart({
                 user_id: req.session.user._id,
-                products: [{ product_id, name, quantity, price }],
+                products: [{ product_id, name,image,description, quantity, price,total }],
             });
         } else {
             const existingProduct = cart.products.find(p => p.product_id === product_id);
             if (existingProduct) {
                 existingProduct.quantity += quantity;
+                existingProduct.total=(existingProduct.quantity*price);
             } else {
-                cart.products.push({ product_id, name, quantity, price });
+                cart.products.push({ product_id, name,image,description , quantity, price,total });
             }
         }
 
@@ -133,24 +139,16 @@ app.post('/add_to_cart', async (req, res) => {
 
 // fetching products
 
-app.get('/get_products', async (req, res) => {
+app.get('/get_products',authenticate, async (req, res) => {
     console.log(req.session.user);
     try {
-
-        console.log(req.session.user?.id);
-
-        if (!req.session.user || !req.session.user._id) {
-            return res.status(401).json({ message: 'Unauthorized, please log in' });
-        }
 
         const cart = await Cart.findOne({ user_id: req.session.user._id });
 
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-
-
-
+        
         console.log(cart.products);
 
         res.json(cart.products);

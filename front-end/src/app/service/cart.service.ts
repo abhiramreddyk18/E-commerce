@@ -124,12 +124,9 @@ export class CartService {
 
 
       getproducts(){
-        this.http.get("http://localhost:1234/get_products").subscribe((res)=>{
-          console.log(res)
-        },(error)=>{
-          console.log(error);
-        })
+        return this.http.get("http://localhost:1234/get_products",{withCredentials:true});
       }
+          
 
      
 
