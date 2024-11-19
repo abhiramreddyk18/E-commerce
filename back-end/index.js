@@ -141,7 +141,7 @@ app.post('/add_to_cart',authenticate, async (req, res) => {
 
 
 app.post('/remove_from_cart',authenticate,async(req,res)=>{
-    const { product_id, price} = req.body;
+    const { product_id,quantity, price} = req.body;
     try{
     let cart = await Cart.findOne({ user_id: req.session.user._id });
 
@@ -149,13 +149,22 @@ app.post('/remove_from_cart',authenticate,async(req,res)=>{
         return res.status(404).json({ message: 'Cart not found' });
     }
 
-    const existingProduct = cart.products.find(p => p.product_id ===String(product_id));
+    const existingProduct = cart.products.find(p =>String( p.product_id)===String(product_id));
+
+    if (!existingProduct) {
+        return res.status(404).json({ message: 'Product not found in cart' });
+    }
+
+    console.log(existingProduct);
    
     if (existingProduct.quantity>1) {
         existingProduct.quantity -= 1;
         existingProduct.total=(existingProduct.quantity*price);
     } else {
-        cart.products = cart.products.filter(p => p.product_id !== String(product_id));
+        await Cart.updateOne(
+            { user_id: req.session.user._id },
+            { $pull: { products: { product_id: String(product_id) } } }
+        );
     }
     await cart.save();
 
@@ -178,10 +187,8 @@ app.get('/get_products',authenticate, async (req, res) => {
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-        
-      
-
-        res.json(cart.products);
+    
+    res.json(cart.products);
     } catch (error) {
         console.error("Error fetching products:", error);
         res.status(500).json({ message: 'Error fetching products', error: error.message });

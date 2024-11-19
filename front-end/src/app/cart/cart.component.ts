@@ -10,50 +10,46 @@ import { map } from 'rxjs/operators';
   styleUrl: './cart.component.css'
 })
 export class CartComponent implements OnInit{
-  public product:any=[];
-  TotalPrice:number;
+  public products:any=[];
+  totalPrice;
 
 constructor(private cartservice:CartService,private router:Router){}
 
 
 ngOnInit(){
 
-
-    this.cartservice.getproducts().subscribe(res=>{
-     
-      this.product=res;
-      
-    },error=>{
-      console.log(error);
-  });
-
+  this.updateAllProducts();
 }
-
-
-onDelete(index:number){
-
-this.cartservice.RemoveItem(index);
-this.TotalPrice=this.cartservice.grandTotal;
-this.product=this.cartservice.products;
-
-}
- 
-
 
 DecreaseItem(index:number){
+  const product = this.products[index];
 
-  this.product[index].quantity-=1;
-  if(this.product[index].quantity==0){
-    this.product.splice(index,1);
+  if (product.quantity > 1) {
+    // Decrease quantity and update the UI
+    product.quantity--;
+  } else {
+    // Remove product from the front end
+    this.products.splice(index, 1);
   }
-  this.cartservice.removeFromCart(this.product[index]);
 
+  this.calculateTotalPrice();
+
+
+  this.cartservice.removeFromCart(this.products[index]);
+
+ 
 }
 
 
 IncreaseItem(index:number){
-  this.product[index].quantity+=1;
-  this.cartservice.addtocart(this.product[index]);
+  const product = this.products[index];
+
+    // Increase quantity and update the UI
+    product.quantity++;
+
+    this.calculateTotalPrice();
+    
+  this.cartservice.addtocart(this.products[index]);
 }
 
 
@@ -63,11 +59,23 @@ ShopMore(){
 
 
 
-RemoveAll(){
-  this.cartservice.RemoveAll();
-
-  this.product=this.cartservice.product;
+updateAllProducts(){
+this.cartservice.getproducts().subscribe(res=>{
+    this.products=res;
+    this.calculateTotalPrice();
+  },error=>{
+    console.log(error);
+  })
 }
+
+
+private calculateTotalPrice(): void {
+  this.totalPrice = this.products.reduce(
+    (sum, product) => sum + product.price * (product.quantity || 1),
+    0
+  );
+}
+
  
  
 

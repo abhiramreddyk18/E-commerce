@@ -16,10 +16,6 @@ constructor(private cartservice:CartService,private apiservice:ApiService){}
 ngOnInit(): void {
 
 
-  this.cartservice.length.subscribe(length=>{
-  this.len=length;
-  })
-
 
 }
 
