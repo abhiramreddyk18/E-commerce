@@ -141,8 +141,30 @@ app.post('/add_to_cart',authenticate, async (req, res) => {
 
 
 app.post('/remove_from_cart',authenticate,async(req,res)=>{
-    
-})
+    const { product_id, price} = req.body;
+    try{
+    let cart = await Cart.findOne({ user_id: req.session.user._id });
+
+    if (!cart) {
+        return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    const existingProduct = cart.products.find(p => p.product_id ===String(product_id));
+   
+    if (existingProduct.quantity>1) {
+        existingProduct.quantity -= 1;
+        existingProduct.total=(existingProduct.quantity*price);
+    } else {
+        cart.products = cart.products.filter(p => p.product_id !== String(product_id));
+    }
+    await cart.save();
+
+    res.status(200).json({ message: 'Product removed from cart successfully', cart });
+    } catch (error) {
+        console.error("Error removing product from cart:", error);
+        res.status(500).json({ message: 'Error removing product from cart', error: error.message });
+    }
+});
 
 
 // fetching products

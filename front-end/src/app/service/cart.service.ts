@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, isEmpty} from 'rxjs';
+import { BehaviorSubject} from 'rxjs';
 import { Product } from '../models/product';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -113,8 +114,7 @@ export class CartService {
 
 
       addtocart(item:Product){
-        console.log("entered service");
-        console.log(item.name);
+      
         this.http.post("http://localhost:1234/add_to_cart",item,{ withCredentials: true }).subscribe((res)=>{
           console.log(res);
         },error=>{
@@ -125,17 +125,16 @@ export class CartService {
 
       getproducts(){
         return this.http.get("http://localhost:1234/get_products",{withCredentials:true});
-      }
+    
           
+        }
+      
+         
+      
+
+    removeFromCart(item:Product){
+        return this.http.post("http://localhost:1234/remove_from_cart",item);
+    }
 
      
-
-
-
-
-
-
-
-
-
 }

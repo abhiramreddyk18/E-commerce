@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CartService } from '../service/cart.service';
 import { ApiService } from '../service/api.service';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cart',
@@ -19,9 +20,9 @@ ngOnInit(){
 
 
     this.cartservice.getproducts().subscribe(res=>{
-      console.log("cart is created ");
+     
       this.product=res;
-      console.log(this.product);
+      
     },error=>{
       console.log(error);
   });
@@ -41,25 +42,18 @@ this.product=this.cartservice.products;
 
 DecreaseItem(index:number){
 
-  this.cartservice.DecreaseQuantity(index);
-
-  this.product=this.cartservice.products;
-
-  this.TotalPrice=this.cartservice.grandTotal;
-
-  console.log(this.cartservice.grandTotal);
+  this.product[index].quantity-=1;
+  if(this.product[index].quantity==0){
+    this.product.splice(index,1);
+  }
+  this.cartservice.removeFromCart(this.product[index]);
 
 }
 
 
 IncreaseItem(index:number){
-
-  this.cartservice.IncreaseQuantity(index);
-
-  this.product=this.cartservice.products;
-
-  this.TotalPrice=this.cartservice.grandTotal;
-
+  this.product[index].quantity+=1;
+  this.cartservice.addtocart(this.product[index]);
 }
 
 
