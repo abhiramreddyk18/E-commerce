@@ -16,13 +16,7 @@ constructor(private cartservice:CartService,private router:Router){}
 
 
 ngOnInit(){
-//   this.cartservice.sendproduct.subscribe(res=>{
-//     this.product=res;
-//   console.log(this.product);
-  
-// });
-    // this.product=this.cartservice.products;
-    // this.TotalPrice=this.cartservice.grandTotal
+
 
     this.cartservice.getproducts().subscribe(res=>{
       console.log("cart is created ");

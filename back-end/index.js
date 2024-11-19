@@ -92,9 +92,7 @@ app.post('/user_login', async (req, res) => {
 
         req.session.user = { _id: user._id };
 
-        console.log(req.session.user._id);
-        console.log(req.session);
-        console.log(req.session.user?.id)
+     
         res.status(200).json({ message: "Successfully logged in" });
     } catch (error) {
         console.error("Error during login:", error);
@@ -111,21 +109,26 @@ app.post('/add_to_cart',authenticate, async (req, res) => {
 
         
         let cart = await Cart.findOne({ user_id: req.session.user._id });
-        console.log(req.session.user?.id)
-        console.log(req.session.user._id);
+
+        
+         
         if (!cart) {
             cart = new Cart({
                 user_id: req.session.user._id,
                 products: [{ product_id, name,image,description, quantity, price,total }],
             });
+           
         } else {
-            const existingProduct = cart.products.find(p => p.product_id === product_id);
+            const existingProduct = cart.products.find(p => p.product_id ===String(product_id));
+            console.log(existingProduct);
             if (existingProduct) {
                 existingProduct.quantity += quantity;
                 existingProduct.total=(existingProduct.quantity*price);
             } else {
                 cart.products.push({ product_id, name,image,description , quantity, price,total });
             }
+
+          
         }
 
         await cart.save();
@@ -137,10 +140,15 @@ app.post('/add_to_cart',authenticate, async (req, res) => {
 });
 
 
+app.post('/remove_from_cart',authenticate,async(req,res)=>{
+    
+})
+
+
 // fetching products
 
 app.get('/get_products',authenticate, async (req, res) => {
-    console.log(req.session.user);
+  
     try {
 
         const cart = await Cart.findOne({ user_id: req.session.user._id });
@@ -149,7 +157,7 @@ app.get('/get_products',authenticate, async (req, res) => {
             return res.status(404).json({ message: "Cart not found" });
         }
         
-        console.log(cart.products);
+      
 
         res.json(cart.products);
     } catch (error) {
