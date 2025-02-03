@@ -44,6 +44,10 @@ export class ProductComponent implements OnInit {
     this.product=new Product (item.id,item.title,item.image,item.description,1,item.price,item.price);
      
     this.cartservice.addtocart(this.product);
+
+
+
+
       
     }
 

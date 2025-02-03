@@ -26,16 +26,18 @@ app.use(session({
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'lax',  // Adjust this if using HTTPS or cross-origin requests
     },
 }));
+
 function authenticate(req, res, next) {
     if (req.session.user) {
-      next();
+        next();
     } else {
-      res.status(401).send('Unauthorized'); 
+        res.status(401).send('Unauthorized');
     }
 }
+
 const user_schema = new mongoose.Schema({
     name: { type: String },
     email: { type: String, required: true, unique: true },
@@ -43,16 +45,16 @@ const user_schema = new mongoose.Schema({
 });
 
 const cart_schema = new mongoose.Schema({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     products: [
         {
             product_id: { type: String, required: true },
             name: { type: String, required: true },
             image: { type: String, required: true },
-            description:{type:String,required:true},
+            description: { type: String, required: true },
             quantity: { type: Number, required: true },
             price: { type: Number, required: true },
-            total:{type:Number,required:true}
+            total: { type: Number, required: true },
         },
     ],
 });
@@ -60,9 +62,7 @@ const cart_schema = new mongoose.Schema({
 const User = mongoose.model('User', user_schema);
 const Cart = mongoose.model('Cart', cart_schema);
 
-
-// user register
-
+// User register
 app.post('/user_register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -75,24 +75,18 @@ app.post('/user_register', async (req, res) => {
     }
 });
 
-
-
-
-// user login
-
+// User login
 app.post('/user_login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
 
-       
-
         if (!user) return res.status(404).json({ message: "User not registered" });
         if (password !== user.password) return res.status(401).json({ message: "Password is incorrect" });
 
-        req.session.user = { _id: user._id };
+        req.session.user = { _id: user._id };  // Store user ID in session
+        console.log('User logged in:', req.session); // Debug session
 
-     
         res.status(200).json({ message: "Successfully logged in" });
     } catch (error) {
         console.error("Error during login:", error);
@@ -100,35 +94,26 @@ app.post('/user_login', async (req, res) => {
     }
 });
 
-
-// add to cart
-
-app.post('/add_to_cart',authenticate, async (req, res) => {
+// Add to cart
+app.post('/add_to_cart', authenticate, async (req, res) => {
     try {
-        const { product_id, name,image,description,quantity, price,total} = req.body;
+        const { product_id, name, image, description, quantity, price, total } = req.body;
 
-        
         let cart = await Cart.findOne({ user_id: req.session.user._id });
 
-        
-         
         if (!cart) {
             cart = new Cart({
                 user_id: req.session.user._id,
-                products: [{ product_id, name,image,description, quantity, price,total }],
+                products: [{ product_id, name, image, description, quantity, price, total }],
             });
-           
         } else {
-            const existingProduct = cart.products.find(p => p.product_id ===String(product_id));
-            console.log(existingProduct);
+            const existingProduct = cart.products.find(p => p.product_id === String(product_id));
             if (existingProduct) {
-                existingProduct.quantity += quantity;
-                existingProduct.total=(existingProduct.quantity*price);
+                existingProduct.quantity += 1;
+                existingProduct.total = existingProduct.quantity * price;
             } else {
-                cart.products.push({ product_id, name,image,description , quantity, price,total });
+                cart.products.push({ product_id, name, image, description, quantity, price, total });
             }
-
-          
         }
 
         await cart.save();
@@ -139,78 +124,79 @@ app.post('/add_to_cart',authenticate, async (req, res) => {
     }
 });
 
+// Remove from cart
+app.post('/remove_from_cart', authenticate, async (req, res) => {
+    const { product_id, name, image, description, quantity, price, total } = req.body;
+    try {
+        let cart = await Cart.findOne({ user_id: req.session.user._id });
 
-app.post('/remove_from_cart',authenticate,async(req,res)=>{
-    const { product_id,quantity, price} = req.body;
-    try{
-    let cart = await Cart.findOne({ user_id: req.session.user._id });
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found' });
+        }
 
-    if (!cart) {
-        return res.status(404).json({ message: 'Cart not found' });
-    }
+        const existingProduct = cart.products.find(p => p.product_id === product_id);
 
-    const existingProduct = cart.products.find(p =>String( p.product_id)===String(product_id));
+        if (!existingProduct) {
+            return res.status(404).json({ message: 'Product not found in cart' });
+        }
 
-    if (!existingProduct) {
-        return res.status(404).json({ message: 'Product not found in cart' });
-    }
+        if (existingProduct.quantity > 1) {
+            existingProduct.quantity -= 1;
+            existingProduct.total = existingProduct.quantity * price;
+        } else {
+            cart.products = cart.products.filter(p => p.product_id !== product_id);
+        }
 
-    console.log(existingProduct);
-   
-    if (existingProduct.quantity>1) {
-        existingProduct.quantity -= 1;
-        existingProduct.total=(existingProduct.quantity*price);
-    } else {
-        await Cart.updateOne(
-            { user_id: req.session.user._id },
-            { $pull: { products: { product_id: String(product_id) } } }
-        );
-    }
-    await cart.save();
+        if (cart.products.length === 0) {
+            await Cart.deleteOne({ user_id: req.session.user._id });
+            return res.status(200).json({ message: 'Cart is now empty' });
+        }
 
-    res.status(200).json({ message: 'Product removed from cart successfully', cart });
+        await cart.save();
+        res.status(200).json({ message: 'Product removed from cart successfully', cart });
     } catch (error) {
         console.error("Error removing product from cart:", error);
         res.status(500).json({ message: 'Error removing product from cart', error: error.message });
     }
 });
 
-
-// fetching products
-
-app.get('/get_products',authenticate, async (req, res) => {
-  
+// Fetch cart products
+app.get('/get_products', authenticate, async (req, res) => {
     try {
-
         const cart = await Cart.findOne({ user_id: req.session.user._id });
 
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-    
-    res.json(cart.products);
+
+        res.json(cart.products);
     } catch (error) {
         console.error("Error fetching products:", error);
         res.status(500).json({ message: 'Error fetching products', error: error.message });
     }
-})
-
-
-
-// logout
-
-app.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) return res.status(500).json({ message: "Logout failed" });
-        res.clearCookie('connect.sid');
-        res.status(200).json({ message: "Logout successful" });
-    });
-
 });
 
+// Logout
+app.get('/logout', (req, res) => {
+    if (!req.session.user) {
+        return res.status(400).json({ message: "No user logged in" });
+    }
 
-// port
+    Cart.deleteOne({ user_id: req.session.user._id }) // Clear cart on logout
+        .then(() => {
+            req.session.destroy(err => {
+                if (err) return res.status(500).json({ message: "Logout failed" });
+                res.clearCookie('connect.sid');
+                res.status(200).json({ message: "Logout successful" });
+            });
+        })
+        .catch(error => {
+            console.error("Error clearing cart during logout:", error);
+            res.status(500).json({ message: "Error clearing cart during logout", error: error.message });
+        });
+});
 
+// Server port
 app.listen(1234, () => {
     console.log("Server is running on port 1234");
 });
